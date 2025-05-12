@@ -6,6 +6,7 @@ const v1 = "/api/v1";
 
 // routes
 const authRoutes = require("./api/v1/routes/authRoutes");
+const serviceRoutes = require("./api/v1/routes/serviceRoutes");
 
 dotenv.config();
 const app = express();
@@ -21,5 +22,6 @@ app.get("/", (req, res) => {
 
 // router
 app.use(`${v1}/auth`, authRoutes);
+app.use(`${v1}/service`, serviceRoutes);
 
 module.exports = app;
