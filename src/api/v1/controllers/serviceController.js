@@ -7,7 +7,7 @@ const createService = async (req, res) => {
     const service = await Service.create({
       title,
       descriptions: [].concat(descriptions),
-      image: req.file.path,
+      image: req.file?.path,
     });
 
     res.status(201).json(service);
