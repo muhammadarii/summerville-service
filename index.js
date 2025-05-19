@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const authRoutes = require("./src/api/v1/routes/authRoutes");
+const serviceRoutes = require("./src/api/v1/routes/serviceRoutes");
 
 const v1 = "/api/v1";
 
@@ -22,5 +23,6 @@ app.get("/", (req, res) => {
 });
 
 app.use(`${v1}/auth`, authRoutes);
+app.use(`${v1}/services`, serviceRoutes);
 
 app.listen(5000, () => console.log("Server running on port 5000"));
