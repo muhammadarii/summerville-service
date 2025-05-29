@@ -6,8 +6,8 @@ const serviceSchema = new mogoose.Schema(
       type: String,
       required: true,
     },
-    description: {
-      type: String,
+    descriptions: {
+      type: [String],
       required: true,
     },
     imageUrl: {
