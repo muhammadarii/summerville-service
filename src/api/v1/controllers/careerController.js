@@ -1,14 +1,30 @@
 const Career = require("../models/Career");
 
+const CreateCareer = async (req, res) => {
+  const { title, description, requirements } = req.body;
+  try {
+    const newCareer = await Career.create({
+      title,
+      description,
+      imageUrl: req.file.path,
+      requirements,
+    });
+    res.status(201).json({ message: "Career created", career: newCareer });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ error: "Career creation failed", details: err.message });
+  }
+};
+
 const GetAllCareers = async (req, res) => {
   try {
-    const careers = await Career.find();
-    res.status(200).json({
-      message: "Careers successfully",
-      careers,
-    });
+    const careers = await Career.find({}).sort({ createdAt: -1 });
+    res.status(200).json({ careers });
   } catch (err) {
-    res.status(500).json({ error: "Failed to retrieve careers" });
+    res
+      .status(400)
+      .json({ error: "Career creation failed", details: err.message });
   }
 };
 
@@ -16,35 +32,11 @@ const GetCareerById = async (req, res) => {
   const { id } = req.params;
   try {
     const career = await Career.findById(id);
-    if (!career) {
-      return res.status(404).json({ error: "Career not found" });
-    }
-    res.status(200).json({
-      message: "Career successfully",
-      career,
-    });
+    res.status(200).json({ career });
   } catch (err) {
-    res.status(500).json({ error: "Failed to retrieve career" });
-  }
-};
-
-const CreatedCareer = async (req, res) => {
-  const { title, description, requirements } = req.body;
-  try {
-    const career = new Career({
-      title,
-      description,
-      imageUrl: req.file.path,
-      requirements,
-    });
-    await career.save();
-    res.status(201).json({
-      message: "Career created successfully",
-      career,
-    });
-  } catch (err) {
-    console.error("Error creating career:", err);
-    res.status(500).json({ error: "Failed to create career" });
+    res
+      .status(400)
+      .json({ error: "Career creation failed", details: err.message });
   }
 };
 
@@ -52,23 +44,17 @@ const UpdateCareer = async (req, res) => {
   const { id } = req.params;
   const { title, description, requirements } = req.body;
   try {
-    const career = await Career.findById(id);
-    if (!career) {
-      return res.status(404).json({ error: "Career not found" });
-    }
-    if (req.file) {
-      career.imageUrl = req.file.path;
-    }
-    career.title = title || career.title;
-    career.description = description || career.description;
-    career.requirements = requirements || career.requirements;
-    await career.save();
-    res.status(200).json({
-      message: "Career updated successfully",
-      career,
+    const updateData = { title, description, requirements };
+    if (req.file) updateData.imageUrl = req.file.path;
+
+    const career = await Career.findByIdAndUpdate(id, updateData, {
+      new: true,
     });
+    res.status(200).json({ message: "Career updated", career });
   } catch (err) {
-    res.status(500).json({ error: "Failed to update career" });
+    res
+      .status(400)
+      .json({ error: "Career update failed", details: err.message });
   }
 };
 
@@ -76,21 +62,18 @@ const DeleteCareer = async (req, res) => {
   const { id } = req.params;
   try {
     const career = await Career.findByIdAndDelete(id);
-    if (!career) {
-      return res.status(404).json({ error: "Career not found" });
-    }
-    res.status(200).json({
-      message: "Career deleted successfully",
-    });
+    res.status(200).json({ message: "Career deleted", career });
   } catch (err) {
-    res.status(500).json({ error: "Failed to delete career" });
+    res
+      .status(400)
+      .json({ error: "Career creation failed", details: err.message });
   }
 };
 
 module.exports = {
+  CreateCareer,
   GetAllCareers,
   GetCareerById,
-  CreatedCareer,
   UpdateCareer,
   DeleteCareer,
 };

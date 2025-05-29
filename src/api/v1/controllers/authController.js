@@ -43,7 +43,7 @@ const login = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     res.json({ accessToken });
   } catch (err) {
@@ -64,7 +64,7 @@ const refreshToken = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     );
     res.json({ accessToken });
   } catch (err) {
