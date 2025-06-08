@@ -7,6 +7,7 @@ const cors = require("cors");
 const authRoutes = require("./src/api/v1/routes/authRoutes");
 const careerRoutes = require("./src/api/v1/routes/careerRoutes");
 const serviceRoutes = require("./src/api/v1/routes/serviceRoutes");
+const workRoutes = require("./src/api/v1/routes/workRoutes");
 
 const v1 = "/api/v1";
 
@@ -26,5 +27,6 @@ app.get("/", (req, res) => {
 app.use(`${v1}/auth`, authRoutes);
 app.use(`${v1}/careers`, careerRoutes);
 app.use(`${v1}/services`, serviceRoutes);
+app.use(`${v1}/works`, workRoutes);
 
 app.listen(5000, () => console.log("Server running on port 5000"));
