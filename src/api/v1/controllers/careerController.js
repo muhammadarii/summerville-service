@@ -24,7 +24,7 @@ const GetAllCareers = async (req, res) => {
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Career creation failed", details: err.message });
+      .json({ error: "Failed to get careers", details: err.message });
   }
 };
 
@@ -32,11 +32,14 @@ const GetCareerById = async (req, res) => {
   const { id } = req.params;
   try {
     const career = await Career.findById(id);
+    if (!career) {
+      return res.status(404).json({ error: "Career not found" });
+    }
     res.status(200).json({ career });
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Career creation failed", details: err.message });
+      .json({ error: "Failed to get career", details: err.message });
   }
 };
 
@@ -62,11 +65,14 @@ const DeleteCareer = async (req, res) => {
   const { id } = req.params;
   try {
     const career = await Career.findByIdAndDelete(id);
+    if (!career) {
+      return res.status(404).json({ error: "Career not found" });
+    }
     res.status(200).json({ message: "Career deleted", career });
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Career creation failed", details: err.message });
+      .json({ error: "Failed to delete career", details: err.message });
   }
 };
 
