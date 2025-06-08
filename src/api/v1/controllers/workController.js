@@ -25,7 +25,7 @@ const GetAllWorks = async (req, res) => {
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Work creation failed", details: err.message });
+      .json({ error: "Failed to get works", details: err.message });
   }
 };
 
@@ -33,11 +33,12 @@ const GetWorkById = async (req, res) => {
   const { id } = req.params;
   try {
     const work = await Work.findById(id);
+    if (!work) {
+      return res.status(404).json({ error: "Work not found" });
+    }
     res.status(200).json({ work });
   } catch (err) {
-    res
-      .status(400)
-      .json({ error: "Work creation failed", details: err.message });
+    res.status(400).json({ error: "Failed to get work", details: err.message });
   }
 };
 
@@ -61,11 +62,14 @@ const DeleteWork = async (req, res) => {
   const { id } = req.params;
   try {
     const work = await Work.findByIdAndDelete(id);
+    if (!work) {
+      return res.status(404).json({ error: "Work not found" });
+    }
     res.status(200).json({ message: "Work deleted", work });
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Work creation failed", details: err.message });
+      .json({ error: "Failed to delete work", details: err.message });
   }
 };
 

@@ -23,7 +23,7 @@ const GetAllServices = async (req, res) => {
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Service creation failed", details: err.message });
+      .json({ error: "Failed to get services", details: err.message });
   }
 };
 
@@ -31,11 +31,14 @@ const GetServiceById = async (req, res) => {
   const { id } = req.params;
   try {
     const service = await Service.findById(id);
+    if (!service) {
+      return res.status(404).json({ error: "Service not found" });
+    }
     res.status(200).json({ service });
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Service creation failed", details: err.message });
+      .json({ error: "Failed to get service", details: err.message });
   }
 };
 
@@ -59,11 +62,14 @@ const DeleteService = async (req, res) => {
   const { id } = req.params;
   try {
     const service = await Service.findByIdAndDelete(id);
+    if (!service) {
+      return res.status(404).json({ error: "Service not found" });
+    }
     res.status(200).json({ message: "Service deleted", service });
   } catch (err) {
     res
       .status(400)
-      .json({ error: "Service creation failed", details: err.message });
+      .json({ error: "Failed to delete service", details: err.message });
   }
 };
 
