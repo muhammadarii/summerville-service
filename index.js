@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: "welcome to api ticketing web app",
+    message: "welcome to api v1 of summerville-service",
   });
 });
 
