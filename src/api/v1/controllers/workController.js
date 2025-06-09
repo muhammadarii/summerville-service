@@ -21,7 +21,7 @@ const CreateWork = async (req, res) => {
 const GetAllWorks = async (req, res) => {
   try {
     const works = await Work.find({}).sort({ createdAt: -1 });
-    res.status(200).json({ works });
+    res.status(200).json({ message: "Works fetched", works });
   } catch (err) {
     res
       .status(400)
@@ -36,7 +36,7 @@ const GetWorkById = async (req, res) => {
     if (!work) {
       return res.status(404).json({ error: "Work not found" });
     }
-    res.status(200).json({ work });
+    res.status(200).json({ message: "Work by id fetched", work });
   } catch (err) {
     res.status(400).json({ error: "Failed to get work", details: err.message });
   }

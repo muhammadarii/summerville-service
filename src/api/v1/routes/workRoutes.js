@@ -7,13 +7,13 @@ const {
   UpdateWork,
   DeleteWork,
 } = require("../controllers/workController");
-const upload = require("../../../middlewares/uploadMiddleware");
+const uploadImage = require("../../../middlewares/uploadImageMiddleware");
 const verifyToken = require("../../../middlewares/authMiddleware");
 
-router.post("/", verifyToken, upload.single("imageUrl"), CreateWork);
+router.post("/", verifyToken, uploadImage.single("imageUrl"), CreateWork);
 router.get("/", GetAllWorks);
 router.get("/:id", GetWorkById);
-router.put("/:id", verifyToken, upload.single("imageUrl"), UpdateWork);
+router.put("/:id", verifyToken, uploadImage.single("imageUrl"), UpdateWork);
 router.delete("/:id", verifyToken, DeleteWork);
 
 module.exports = router;
