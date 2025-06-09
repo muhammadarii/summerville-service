@@ -7,13 +7,13 @@ const {
   UpdateService,
   DeleteService,
 } = require("../controllers/serviceController");
-const upload = require("../../../middlewares/uploadMiddleware");
+const uploadImage = require("../../../middlewares/uploadImageMiddleware");
 const verifyToken = require("../../../middlewares/authMiddleware");
 
-router.post("/", verifyToken, upload.single("imageUrl"), CreateService);
+router.post("/", verifyToken, uploadImage.single("imageUrl"), CreateService);
 router.get("/", GetAllServices);
 router.get("/:id", GetServiceById);
-router.put("/:id", verifyToken, upload.single("imageUrl"), UpdateService);
+router.put("/:id", verifyToken, uploadImage.single("imageUrl"), UpdateService);
 router.delete("/:id", verifyToken, DeleteService);
 
 module.exports = router;

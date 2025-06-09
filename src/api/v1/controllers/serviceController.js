@@ -19,7 +19,7 @@ const CreateService = async (req, res) => {
 const GetAllServices = async (req, res) => {
   try {
     const services = await Service.find({}).sort({ createdAt: -1 });
-    res.status(200).json({ services });
+    res.status(200).json({ message: "Services fetched", services });
   } catch (err) {
     res
       .status(400)
@@ -34,7 +34,7 @@ const GetServiceById = async (req, res) => {
     if (!service) {
       return res.status(404).json({ error: "Service not found" });
     }
-    res.status(200).json({ service });
+    res.status(200).json({ message: "Service by id fetched", service });
   } catch (err) {
     res
       .status(400)

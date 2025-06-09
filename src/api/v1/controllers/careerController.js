@@ -1,4 +1,5 @@
 const Career = require("../models/Career");
+const JobSeeker = require("../models/JobSeeker");
 
 const CreateCareer = async (req, res) => {
   const { title, description, requirements } = req.body;
@@ -20,22 +21,37 @@ const CreateCareer = async (req, res) => {
 const GetAllCareers = async (req, res) => {
   try {
     const careers = await Career.find({}).sort({ createdAt: -1 });
-    res.status(200).json({ careers });
+
+    const allCareers = await Promise.all(
+      careers.map(async (career) => {
+        const applicants = await JobSeeker.find({ careerId: career._id });
+        return { ...career.toObject(), applicants };
+      })
+    );
+
+    res.status(200).json({ message: "Careers fetched", careers: allCareers });
   } catch (err) {
+    console.error("Error fetching careers with job seekers:", err);
     res
-      .status(400)
+      .status(500)
       .json({ error: "Failed to get careers", details: err.message });
   }
 };
 
 const GetCareerById = async (req, res) => {
   const { id } = req.params;
+
   try {
     const career = await Career.findById(id);
     if (!career) {
       return res.status(404).json({ error: "Career not found" });
     }
-    res.status(200).json({ career });
+
+    const applicants = await JobSeeker.find({ careerId: career._id });
+    res.status(200).json({
+      message: "Career by id fetched",
+      career: { ...career.toObject(), applicants },
+    });
   } catch (err) {
     res
       .status(400)

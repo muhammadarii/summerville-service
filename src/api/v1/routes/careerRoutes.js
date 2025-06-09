@@ -7,13 +7,13 @@ const {
   UpdateCareer,
   DeleteCareer,
 } = require("../controllers/careerController");
-const upload = require("../../../middlewares/uploadMiddleware");
+const uploadImage = require("../../../middlewares/uploadImageMiddleware");
 const verifyToken = require("../../../middlewares/authMiddleware");
 
-router.post("/", verifyToken, upload.single("imageUrl"), CreateCareer);
+router.post("/", verifyToken, uploadImage.single("imageUrl"), CreateCareer);
 router.get("/", GetAllCareers);
 router.get("/:id", GetCareerById);
-router.put("/:id", verifyToken, upload.single("imageUrl"), UpdateCareer);
+router.put("/:id", verifyToken, uploadImage.single("imageUrl"), UpdateCareer);
 router.delete("/:id", verifyToken, DeleteCareer);
 
 module.exports = router;

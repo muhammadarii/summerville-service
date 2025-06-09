@@ -26,7 +26,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Limit ukuran file dan tambahkan fileFilter
-const upload = multer({
+const uploadImage = multer({
   storage,
   fileFilter,
   limits: {
@@ -34,4 +34,4 @@ const upload = multer({
   },
 });
 
-module.exports = upload;
+module.exports = uploadImage;
