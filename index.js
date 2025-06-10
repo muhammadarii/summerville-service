@@ -4,6 +4,13 @@ const connectDB = require("./src/config/db");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+const allowedOrigins = [
+  "https://summerville-service-production.up.railway.app",
+  "https://summervilleintech.vercel.app/",
+  "http://localhost:3000",
+  "http://localhost:5000",
+];
+
 const authRoutes = require("./src/api/v1/routes/authRoutes");
 const careerRoutes = require("./src/api/v1/routes/careerRoutes");
 const jobSeekerRoutes = require("./src/api/v1/routes/jobSeekerRoutes");
@@ -17,7 +24,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: "https://summerville-service-production.up.railway.app",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
