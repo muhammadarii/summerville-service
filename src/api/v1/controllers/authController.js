@@ -1,90 +1,96 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../../../helpers/authHelpers");
 
 const register = async (req, res) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-    });
-    res.status(201).json({ message: "User registered", user: user.email });
+    const user = await User.create({ email, password: hashedPassword });
+    await user.save();
+
+    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    res.status(400).json({ error: "Register failed", details: err.message });
+    res
+      .status(400)
+      .json({ error: "User registration failed", details: err.message });
   }
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
-    const accessToken = jwt.sign(
-      { id: user._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "7d" }
-    );
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-    res.json({ accessToken });
+    res
+      .status(200)
+      .json({ message: "Login successful", accessToken, refreshToken });
   } catch (err) {
-    res.status(500).json({ error: "Login failed" });
+    console.error("Login Error:", err);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: err.message });
   }
 };
 
-const refreshToken = async (req, res) => {
-  const cookies = req.cookies;
-  if (!cookies?.jwt) return res.sendStatus(401);
-  const refreshToken = cookies.jwt;
+const token = async (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.sendStatus(401);
 
   try {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const user = await User.findById(decoded.id);
-    if (!user || user.refreshToken !== refreshToken) return res.sendStatus(403);
+    const user = await User.findOne({ refreshToken: token });
+    if (!user) return res.sendStatus(403);
 
-    const accessToken = jwt.sign(
-      { id: user._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "7d" }
-    );
-    res.json({ accessToken });
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err) return res.sendStatus(403);
+      const accessToken = generateAccessToken(user);
+      res.json({ accessToken });
+    });
   } catch (err) {
-    res.sendStatus(403);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: err.message });
   }
 };
 
 const logout = async (req, res) => {
-  const cookies = req.cookies;
-  if (!cookies?.jwt) return res.sendStatus(204);
+  const { token } = req.body;
+  if (!token) return res.sendStatus(401);
 
-  const refreshToken = cookies.jwt;
-  const user = await User.findOne({ refreshToken });
-  if (user) {
+  try {
+    const user = await User.findOne({ refreshToken: token });
+    if (!user) return res.sendStatus(403);
     user.refreshToken = null;
     await user.save();
+    res.sendStatus(204);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: err.message });
   }
-
-  res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "Strict" });
-  res.sendStatus(204);
 };
 
-module.exports = { register, login, refreshToken, logout };
+module.exports = { register, login, token, logout };
