@@ -6,7 +6,7 @@ const cors = require("cors");
 
 const allowedOrigins = [
   "https://summerville-service-production.up.railway.app",
-  "https://summervilleintech.vercel.app/",
+  "https://summervilleintech.vercel.app",
   "http://localhost:3000",
   "http://localhost:5000",
 ];
