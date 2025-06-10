@@ -3,13 +3,13 @@ const router = express.Router();
 const {
   register,
   login,
-  refreshToken,
+  token,
   logout,
 } = require("../controllers/authController");
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/refresh", refreshToken);
+router.post("/token", token);
 router.post("/logout", logout);
 
 module.exports = router;
