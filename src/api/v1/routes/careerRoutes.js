@@ -11,7 +11,7 @@ const uploadImage = require("../../../middlewares/uploadImageMiddleware");
 const verifyToken = require("../../../middlewares/authMiddleware");
 
 router.post("/", verifyToken, uploadImage.single("imageUrl"), CreateCareer);
-router.get("/", verifyToken, GetAllCareers);
+router.get("/", GetAllCareers);
 router.get("/:id", GetCareerById);
 router.put("/:id", verifyToken, uploadImage.single("imageUrl"), UpdateCareer);
 router.delete("/:id", verifyToken, DeleteCareer);
