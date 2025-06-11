@@ -2,7 +2,7 @@ const Career = require("../models/Career");
 const JobSeeker = require("../models/JobSeeker");
 
 const CreateCareer = async (req, res) => {
-  const { title, description, requirements } = req.body;
+  const { title, description, requirements, responsibility } = req.body;
   try {
     const newCareer = await Career.create({
       title,
