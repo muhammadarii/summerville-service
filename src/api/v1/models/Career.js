@@ -18,6 +18,10 @@ const careerSchema = new mongoose.Schema(
       type: [String],
       required: true,
     },
+    responsibility: {
+      type: [String],
+      required: true,
+    },
   },
   {
     timestamps: true,

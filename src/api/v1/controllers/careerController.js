@@ -9,6 +9,7 @@ const CreateCareer = async (req, res) => {
       description,
       imageUrl: req.file.path,
       requirements,
+      responsibility,
     });
     res.status(201).json({ message: "Career created", career: newCareer });
   } catch (err) {
@@ -61,9 +62,9 @@ const GetCareerById = async (req, res) => {
 
 const UpdateCareer = async (req, res) => {
   const { id } = req.params;
-  const { title, description, requirements } = req.body;
+  const { title, description, requirements, responsibility } = req.body;
   try {
-    const updateData = { title, description, requirements };
+    const updateData = { title, description, requirements, responsibility };
     if (req.file) updateData.imageUrl = req.file.path;
 
     const career = await Career.findByIdAndUpdate(id, updateData, {
