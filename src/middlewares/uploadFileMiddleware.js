@@ -4,11 +4,11 @@ const cloudinary = require("../config/cloudinary");
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
+  params: (req, file) => ({
     folder: "summerfile-files",
     allowed_formats: ["pdf"],
     public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
-  },
+  }),
 });
 
 // Validasi file type
