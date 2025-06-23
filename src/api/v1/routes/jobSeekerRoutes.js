@@ -9,12 +9,7 @@ const {
 const uploadFile = require("../../../middlewares/uploadFileMiddleware");
 const verifyToken = require("../../../middlewares/authMiddleware");
 
-router.post(
-  "/apply/:id",
-  verifyToken,
-  uploadFile.single("resume"),
-  CreateJobSeeker
-);
+router.post("/apply/:id", uploadFile.single("resume"), CreateJobSeeker);
 router.get("/", verifyToken, GetAllJobSeekers);
 router.get("/:id", verifyToken, GetJobSeekerById);
 router.delete("/:id", verifyToken, DeleteJobSeeker);
