@@ -7,6 +7,7 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "summerfile-files",
     allowed_formats: ["pdf"],
+    public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
   },
 });
 
